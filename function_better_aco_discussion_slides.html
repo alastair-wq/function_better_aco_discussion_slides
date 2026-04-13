@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Function Better · ACO Discussion</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: "DM Sans", sans-serif;
+  background: #f0ede8;
+}
+
+.deck { height: 100vh; position: relative; }
+
+.slide {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 56px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 24px 16px;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.slide.active { opacity: 1; pointer-events: auto; }
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: 0.5px solid rgba(0,0,0,0.15);
+  padding: 48px 52px;
+  max-width: 860px;
+  width: 100%;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+}
+
+/* ── Typography ── */
+.label {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9a9890;
+  margin-bottom: 12px;
+}
+
+.headline {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 30px;
+  line-height: 1.15;
+  color: #1a1a18;
+  margin-bottom: 10px;
+}
+
+.headline em { font-style: italic; color: #3d3d3a; }
+
+.divider { height: 0.5px; background: rgba(0,0,0,0.08); margin: 1.4rem 0; }
+
+/* ─────────────────────────────────────────
+   SLIDE 1 — FRONT
+───────────────────────────────────────── */
+
+.bei-intro {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #3d3d3a;
+  margin-bottom: 1.6rem;
+}
+
+.bei-intro b { color: #1a1a18; font-weight: 600; }
+
+.models-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.model-card {
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  background: #f9f8f5;
+}
+
+.model-card.highlight { background: #e8f2fb; border-color: rgba(12,95,168,0.2); }
+.model-card.oncology  { background: #eaf4ee; border-color: rgba(26,107,48,0.2); }
+.model-card.lead      { background: #fdf8ee; border-color: rgba(180,130,40,0.2); }
+
+.model-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1a18;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.model-date {
+  font-size: 11px;
+  color: #5c5c58;
+  margin-bottom: 6px;
+}
+
+.model-note {
+  font-size: 10.5px;
+  color: #7a7a75;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+.front-stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+  background: #1a1a18;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1.4rem;
+}
+
+.stat-number {
+  padding: 1rem 1.4rem;
+  border-right: 0.5px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-big {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 36px;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.stat-unit { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
+
+.stat-desc {
+  padding: 1rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-desc-text {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.6;
+}
+
+.stat-desc-text b { color: #fff; font-weight: 500; }
+
+.cms-link-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cms-link-row a {
+  font-size: 11.5px;
+  color: #0c5fa8;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  border-bottom: 0.5px solid rgba(12,95,168,0.3);
+  padding-bottom: 1px;
+  transition: border-color 0.15s;
+}
+
+.cms-link-row a:hover { border-color: #0c5fa8; }
+
+.cms-link-label {
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9a9890;
+}
+
+.bridge-line {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 13.5px;
+  font-style: italic;
+  color: #5c5c58;
+  line-height: 1.6;
+  margin-top: 1.2rem;
+}
+
+.bridge-line b { font-style: normal; color: #1a1a18; font-weight: 400; }
+
+/* ─────────────────────────────────────────
+   SLIDE 2 — PROBLEM
+───────────────────────────────────────── */
+
+.tension {
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: #1a1a18;
+  margin-bottom: 1.6rem;
+  padding: 1.2rem 1.4rem;
+  background: #f5f5f2;
+  border-left: 3px solid #1a1a18;
+  border-radius: 0 8px 8px 0;
+}
+
+.tension b { font-weight: 600; }
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.6rem;
+}
+
+.tension-box {
+  padding: 1rem 1.1rem;
+  border-radius: 10px;
+  border: 0.5px solid rgba(0,0,0,0.12);
+}
+
+.tension-box.red    { background: #fdf1f0; border-color: rgba(180,50,30,0.2); }
+.tension-box.amber  { background: #fdf8ee; border-color: rgba(180,130,40,0.25); }
+.tension-box.slate  { background: #f0f2f5; border-color: rgba(40,60,100,0.2); }
+
+.box-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid currentColor;
+  display: inline-block;
+}
+
+.box-label.red    { color: #a33020; }
+.box-label.amber  { color: #8B6914; }
+.box-label.slate  { color: #2a3c64; }
+
+.box-body { font-size: 12px; color: #3d3d3a; line-height: 1.6; }
+
+.close-line {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #5c5c58;
+  line-height: 1.6;
+}
+
+.close-line b { font-style: normal; font-weight: 400; color: #1a1a18; }
+
+/* ─────────────────────────────────────────
+   SLIDE 3 — SOLUTION
+───────────────────────────────────────── */
+
+.safe-harbor {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #e8f2fb;
+  border: 0.5px solid rgba(12,95,168,0.2);
+  border-radius: 8px;
+  padding: 10px 13px;
+  margin-bottom: 1.4rem;
+}
+
+.safe-harbor-icon { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
+
+.safe-harbor-text { font-size: 11.5px; color: #1a4a7a; line-height: 1.55; }
+.safe-harbor-text b { font-weight: 600; }
+
+/* Phases */
+.phases {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr 24px 1fr;
+  gap: 0;
+  align-items: stretch;
+  margin-bottom: 1.4rem;
+}
+
+.phase-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #c5c3bb;
+  padding-top: 2.4rem;
+}
+
+.phase {
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 11px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.phase-1 { border-color: rgba(12,95,168,0.22); background: #e8f2fb; }
+.phase-2 { background: #1a1a18; border-color: #1a1a18; }
+.phase-3 { border-color: rgba(26,107,48,0.2); background: #eaf4ee; }
+
+.phase-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-bottom: 0.6rem;
+  align-self: flex-start;
+}
+
+.phase-1 .phase-badge { background: rgba(12,95,168,0.12); color: #0c5fa8; }
+.phase-2 .phase-badge { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+.phase-3 .phase-badge { background: rgba(26,107,48,0.12); color: #1a6b30; }
+
+.phase-heading {
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 0.5px solid;
+}
+
+.phase-1 .phase-heading { color: #0c5fa8; border-color: rgba(12,95,168,0.15); }
+.phase-2 .phase-heading { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.1); }
+.phase-3 .phase-heading { color: #1a6b30; border-color: rgba(26,107,48,0.15); }
+
+.phase-steps { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+
+.phase-steps li {
+  font-size: 11.5px;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.phase-1 .phase-steps li { color: #1a3a5c; }
+.phase-2 .phase-steps li { color: rgba(255,255,255,0.72); }
+.phase-3 .phase-steps li { color: #1a3d28; }
+
+.phase-steps li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.phase-1 .phase-steps li::before { background: rgba(12,95,168,0.5); }
+.phase-2 .phase-steps li::before { background: rgba(255,255,255,0.4); }
+.phase-3 .phase-steps li::before { background: rgba(26,107,48,0.5); }
+/* Key steps */
+.phase-steps li.is-key { font-weight: 500; }
+.phase-1 .phase-steps li.is-key::before { background: #0c5fa8; width: 6px; height: 6px; margin-top: 4px; }
+.phase-2 .phase-steps li.is-key::before { background: rgba(255,255,255,0.9); width: 6px; height: 6px; margin-top: 4px; }
+.phase-3 .phase-steps li.is-key::before { background: #1a6b30; width: 6px; height: 6px; margin-top: 4px; }
+
+.step-note {
+  font-size: 9.5px;
+  font-style: italic;
+  opacity: 0.7;
+  display: block;
+  margin-top: 1px;
+}
+
+
+
+/* Data close */
+.data-close {
+  background: #1a1a18;
+  border-radius: 10px;
+  padding: 1rem 1.3rem;
+}
+
+.data-close-text {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.65;
+}
+
+.data-close-text b { color: #fff; font-weight: 500; }
+
+/* ── Nav ── */
+.nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: rgba(240,237,232,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 0.5px solid rgba(0,0,0,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 200;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  border: 0.5px solid rgba(0,0,0,0.18);
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a18;
+  font-family: "DM Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s, transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+.nav-btn:hover:not(:disabled) { background: #f5f5f2; transform: translateY(-1px); }
+.nav-btn:active:not(:disabled) { transform: translateY(0); }
+.nav-btn:disabled { opacity: 0.28; cursor: default; }
+
+.nav-counter {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 14px;
+  color: #5c5c58;
+  min-width: 40px;
+  text-align: center;
+}
+
+.dot-row { display: flex; gap: 6px; align-items: center; }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.dot.on { background: #1a1a18; transform: scale(1.3); }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .slide { padding: 16px 12px 8px; }
+  .card { padding: 26px 18px; border-radius: 10px; }
+  .headline { font-size: 20px; }
+  .tension { font-size: 13px; padding: 1rem 1.1rem; }
+
+  .models-grid { grid-template-columns: 1fr; gap: 8px; }
+  .three-col { grid-template-columns: 1fr; gap: 8px; }
+
+  .front-stats { grid-template-columns: 1fr; }
+  .stat-number { border-right: none; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
+
+  .phases { grid-template-columns: 1fr; gap: 10px; }
+  .phase-arrow { display: none; }
+
+  /* Slide 4 inline grids */
+  #s3 .card > div[style*="grid-template-columns:1fr 1fr 1fr"],
+  #s3 .card > div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px;
+  }
+  /* BEI anchor row — stack on mobile */
+  #s3 .card > div[style*="display:flex"][style*="gap:1.4rem"],
+  #s3 .card > div[style*="display: flex"][style*="gap: 1.4rem"] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .nav { gap: 10px; }
+  .nav-btn { padding: 7px 12px; font-size: 11px; }
+  .dot-row { display: none; }
+}
+
+@media (max-width: 400px) {
+  .card { padding: 18px 14px; }
+  .headline { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ════════════════════════════════════
+       SLIDE 1 — FRONT / ORIENTATION
+  ════════════════════════════════════ -->
+  <div class="slide active" id="s0">
+    <div class="card">
+
+      <p class="label">CMS Innovation Center &middot; April 2026 &middot; Briefing Note</p>
+
+      <h1 class="headline">The Substance Access<br>Beneficiary Engagement Incentive</h1>
+
+      <div class="divider"></div>
+
+      <p class="bei-intro">
+        A new optional incentive — part of the CMS Innovation Center&rsquo;s value-based care programme — that allows participating organisations to <b>consult eligible Medicare beneficiaries about hemp products for symptom management</b> and furnish those products directly as part of a structured clinical protocol.
+      </p>
+
+      <div class="models-grid">
+        <div class="model-card highlight">
+          <p class="model-name">ACO REACH Model</p>
+          <p class="model-date">Available April 1, 2026</p>
+          <p class="model-note">Population-based accountable care. Broadest beneficiary reach.</p>
+        </div>
+        <div class="model-card oncology">
+          <p class="model-name">Enhancing Oncology Model (EOM)</p>
+          <p class="model-date">Available April 1, 2026</p>
+          <p class="model-note">Cancer care. Particularly relevant for pain, nausea, sleep.</p>
+        </div>
+        <div class="model-card lead">
+          <p class="model-name">LEAD Model</p>
+          <p class="model-date">Available January 1, 2027</p>
+          <p class="model-note">Long-term enhanced ACO design. Next-wave opportunity.</p>
+        </div>
+      </div>
+
+      <div class="front-stats">
+        <div class="stat-number">
+          <p class="stat-big">$500</p>
+          <p class="stat-unit">per beneficiary / year</p>
+        </div>
+        <div class="stat-desc">
+          <p class="stat-desc-text">
+            The participant organisation absorbs the product cost — <b>Medicare does not reimburse it.</b> Products must be furnished directly by a qualified, affiliated physician following a documented clinical protocol and CMS-approved Implementation Plan. Beneficiaries cannot be asked to purchase retail products or submit claims.
+          </p>
+        </div>
+      </div>
+
+      <div class="cms-link-row">
+        <span class="cms-link-label">Source</span>
+        <a href="https://www.cms.gov/priorities/innovation/substance-access-beneficiary-engagement-incentive" target="_blank">
+          cms.gov &mdash; Substance Access Beneficiary Engagement Incentive &rarr;
+        </a>
+      </div>
+
+      <p class="bridge-line">This is new territory. <b>The clinical and compliance infrastructure to run it safely — and compliantly — doesn&rsquo;t yet exist.</b></p>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SLIDE 2 — THE PROBLEM
+  ════════════════════════════════════ -->
+  <div class="slide" id="s1">
+    <div class="card">
+
+      <p class="label">Function Better &middot; The Clinical &amp; Operational Reality</p>
+
+      <h1 class="headline">Physicians are being asked to prescribe<br>something medicine doesn&rsquo;t yet understand.</h1>
+
+      <div class="divider"></div>
+
+      <p class="tension">
+        Cannabinoids are <b>biphasic</b> — the same compound can produce markedly different effects depending on dose.
+        The endocannabinoid system is <b>poorly mapped</b> in clinical training.
+        And a certificate of analysis (COA) tells you almost nothing on its own:
+        potency is one variable among dozens of cannabinoid ratios and terpene profiles.
+        <b>No physician today can confidently say which profile or dose will be most effective for a specific patient and condition.</b>
+      </p>
+
+      <div class="three-col">
+        <div class="tension-box red">
+          <p class="box-label red">The compliance gap</p>
+          <p class="box-body">The BEI requires a CMS-approved Implementation Plan before a single patient can be seen — documenting specific products, dosing, eligibility criteria, and safeguards. No standard template or infrastructure exists to build or maintain it.</p>
+        </div>
+        <div class="tension-box amber">
+          <p class="box-label amber">The knowledge gap</p>
+          <p class="box-body">No physician-supervised outcomes dataset exists linking a verified cannabinoid profile to a therapeutic effect. The clinical knowledge needed to prescribe confidently simply hasn&rsquo;t been generated at scale.</p>
+        </div>
+        <div class="tension-box slate">
+          <p class="box-label slate">The liability gap</p>
+          <p class="box-body">CMS mandates documented shared decision-making, medication review, and adverse event monitoring — per patient, per protocol. Without a structured system, the documentation liability sits entirely with the prescribing physician.</p>
+        </div>
+      </div>
+
+      <p class="close-line">These aren&rsquo;t reasons to avoid the BEI. <b>They are exactly what we built this to solve.</b></p>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SLIDE 3 — THE SOLUTION
+  ════════════════════════════════════ -->
+  <div class="slide" id="s2">
+    <div class="card">
+
+      <p class="label">Function Better &middot; Clinical Operating System &middot; BEI Point Solution</p>
+
+      <h1 class="headline">A structured protocol that makes compliant<br>prescribing possible — and generates the data<br>that makes it better over time.</h1>
+
+      <div class="divider"></div>
+
+      <div class="safe-harbor">
+        <span class="safe-harbor-icon">&#9432;</span>
+        <p class="safe-harbor-text">
+          <b>The physician makes the recommendation.</b> Function Better provides the structure, documentation trail, and verification layer — operating as a Clinical Decision Support tool within FDA Enforcement Discretion safe harbor. Liability rests appropriately with the prescribing clinician. <b>The Minimum Effective Dose is observed and recorded — never prescribed.</b>
+        </p>
+      </div>
+
+      <div class="phases">
+
+        <div class="phase phase-1">
+          <span class="phase-badge">Pre-initiation</span>
+          <p class="phase-heading">Setup &amp; Approval</p>
+          <ul class="phase-steps">
+            <li class="is-key">Implementation Plan
+              <span class="step-note">CMS submission &amp; approval — products, dosing, safeguards documented</span>
+            </li>
+            <li class="is-key">Physician &amp; practitioner education</li>
+            <li>COA &amp; supplier audit
+              <span class="step-note">Full cannabinoid + terpene profile. Third-party tested: potency, contaminants.</span>
+            </li>
+            <li>Drug interaction check (CYP450)
+              <span class="step-note">Physician search + sign-off &mdash; FHIR-ready for EHR integration</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="phase-arrow">&rarr;</div>
+
+        <div class="phase phase-2">
+          <span class="phase-badge">Active &mdash; 9 Days</span>
+          <p class="phase-heading">Per-Patient Protocol</p>
+          <ul class="phase-steps">
+            <li>Beneficiary eligibility screening
+              <span class="step-note">Disqualifying conditions, frailty, pregnancy check</span>
+            </li>
+            <li class="is-key">ICD-10 coding &amp; clinical justification</li>
+            <li>Shared decision-making session
+              <span class="step-note">Goals, preferences, risks, benefits — fully documented</span>
+            </li>
+            <li class="is-key">Baseline clinical assessment</li>
+            <li>Daily check-ins &amp; dose titration
+              <span class="step-note">Low &rarr; Mid &rarr; Full dose &middot; escalation days 4 &amp; 7 &middot; daily SMS</span>
+            </li>
+            <li>Adverse event monitoring</li>
+          </ul>
+        </div>
+
+        <div class="phase-arrow">&rarr;</div>
+
+        <div class="phase phase-3">
+          <span class="phase-badge">Outcomes</span>
+          <p class="phase-heading">Close &amp; Report</p>
+          <ul class="phase-steps">
+            <li>End-of-protocol clinical assessment</li>
+            <li>Therapeutic window &amp; optimal dose documented</li>
+            <li>Per-beneficiary spend tracking
+              <span class="step-note">$500 annual cap compliance</span>
+            </li>
+            <li>CMS quarterly reporting
+              <span class="step-note">Compliant submission, audit trail preserved</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="data-close">
+        <p class="data-close-text">
+          Every completed protocol links a <b>verified cannabinoid profile to a documented therapeutic outcome</b> — building the real-world evidence dataset that doesn&rsquo;t exist anywhere else. The more ACOs participate, the faster that knowledge compounds for everyone.
+        </p>
+      </div>
+
+    </div>
+  </div>
+  <!-- SLIDE 4 — WHY IT PAYS FOR ITSELF -->
+  <div class="slide" id="s3">
+    <div class="card">
+
+      <p class="label">Function Better &middot; The Financial Case &middot; ACO REACH &middot; 2026</p>
+
+      <h1 class="headline">The platform doesn&rsquo;t add cost<br>to the BEI. It&rsquo;s what makes<br>the $500 defensible.</h1>
+
+      <div class="divider"></div>
+
+      <div style="background:#1a1a18;border-radius:11px;padding:1rem 1.3rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1.4rem;">
+        <div style="flex-shrink:0;text-align:center;">
+          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:40px;color:#fff;line-height:1;">$500</p>
+          <p style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:2px;">per beneficiary</p>
+        </div>
+        <p style="font-size:12.5px;color:rgba(255,255,255,0.72);line-height:1.6;">
+          CMS requires continuous engagement and documented outcomes to release the BEI incentive.
+          <b style="color:#fff;">The 9-day check-in and Final Titration Summary are that documentation.</b>
+        </p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin-bottom:1.2rem;">
+
+        <div class="tension-box red">
+          <p class="box-label red">ED avoidance</p>
+          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:#a33020;line-height:1;margin-bottom:5px;">$1,500&ndash;3,000</p>
+          <p class="box-body">per avoided visit. Daily titration check-ins prevent the panic ER visit.</p>
+        </div>
+
+        <div class="tension-box amber">
+          <p class="box-label amber">Readmission penalty</p>
+          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:#8B6914;line-height:1;margin-bottom:5px;">~$15,000+</p>
+          <p class="box-body">per inpatient stay. Adverse event flags intervene before hospitalisation.</p>
+        </div>
+
+        <div class="tension-box slate">
+          <p class="box-label slate">Quality withhold</p>
+          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:#2a3c64;line-height:1;margin-bottom:5px;">5% protected</p>
+          <p class="box-body">ICD-10 coding, shared decision records, and adverse event logs satisfy CMS quality measures.</p>
+        </div>
+
+        <div style="padding:1rem 1.1rem;border-radius:10px;border:0.5px solid rgba(26,107,48,0.2);background:#eaf4ee;">
+          <p class="box-label" style="color:#1a6b30;border-color:#1a6b30;">Opioid reduction</p>
+          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:#1a6b30;line-height:1;margin-bottom:5px;">16% avg. drop</p>
+          <p class="box-body" style="color:#1a3d28;">in opioid prescriptions where cannabinoid access is physician-supervised. Direct reduction in Part D spend and overdose risk.</p>
+        </div>
+
+        <div style="padding:1rem 1.1rem;border-radius:10px;border:0.5px solid rgba(0,0,0,0.12);background:#f5f5f2;">
+          <p class="box-label" style="color:#5c5c58;border-color:#9a9890;">Physician time</p>
+          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:#1a1a18;line-height:1;margin-bottom:5px;">~10 min back</p>
+          <p class="box-body">per patient. The Final Summary is EHR-ready — adherence, symptom trend, safety flags. No manual charting.</p>
+        </div>
+
+      </div>
+
+      <p class="close-line">Ten prevented ER visits across 1,000 patients covers the platform cost. <b>Everything beyond that is margin.</b></p>
+
+    </div>
+  </div>
+
+
+
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <button class="nav-btn" id="bprev" onclick="go(-1)" disabled>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M8 1.5L3.5 6 8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Prev
+  </button>
+
+  <div class="dot-row">
+    <span class="dot on" onclick="goTo(0)"></span>
+    <span class="dot" onclick="goTo(1)"></span>
+    <span class="dot" onclick="goTo(2)"></span>
+    <span class="dot" onclick="goTo(3)"></span>
+  </div>
+
+  <span class="nav-counter" id="ctr">1 / 3</span>
+
+  <button class="nav-btn" id="bnext" onclick="go(1)">
+    Next
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M4 1.5L8.5 6 4 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</nav>
+
+<script>
+  var cur = 0, total = 4;
+  function update() {
+    for (var i = 0; i < total; i++) {
+      document.getElementById('s'+i).classList.toggle('active', i === cur);
+      document.querySelectorAll('.dot')[i].classList.toggle('on', i === cur);
+    }
+    document.getElementById('ctr').textContent = (cur+1)+' / '+total;
+    document.getElementById('bprev').disabled = cur === 0;
+    document.getElementById('bnext').disabled = cur === total - 1;
+    document.getElementById('s'+cur).scrollTop = 0;
+  }
+  function go(d) { var n = cur+d; if (n >= 0 && n < total) { cur = n; update(); } }
+  function goTo(i) { cur = i; update(); }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+  var tx = 0;
+  document.addEventListener('touchstart', function(e) { tx = e.changedTouches[0].screenX; }, {passive:true});
+  document.addEventListener('touchend',   function(e) {
+    var dx = e.changedTouches[0].screenX - tx;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+  }, {passive:true});
+</script>
+
+</body>
+</html>
